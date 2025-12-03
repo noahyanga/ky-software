@@ -34,7 +34,7 @@ export default function SupportPage() {
     <div className="bg-slate-200 min-h-screen">
       <Header />
       <Sidebar />
-      <div className="max-w-3xl mx-auto py-10 px-6 space-y-10">
+      <div className="max-w-5xl mx-auto py-8 px-6 space-y-5">
         {/* Intro */}
         <header className="mb-8">
           <h1 className="text-4xl font-extrabold text-gray-900 mb-2">

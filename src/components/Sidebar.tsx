@@ -18,6 +18,8 @@ const menuItems = [
   { id: "forecasting", label: "Forecasting", icon: <FiTrendingUp />, path: "/forecasting" },
   { id: "financials", label: "Financials", icon: <FiTruck />, path: "/financials" },
   { id: "reports", label: "Reports", icon: <FiFolder />, path: "/reports" },
+  { id: "analytics", label: "Analytics", icon: <FiFileText />, path: "/analytics" },
+  { id: "users", label: "User Management", icon: <FiUsers />, path: "/users" },
   { id: "support", label: "Support", icon: <FiLifeBuoy />, path: "/support" },
   { id: "settings", label: "Settings", icon: <FiSettings />, path: "/settings" },
 ];
@@ -31,7 +33,7 @@ const Sidebar = () => {
     <aside
       className={`fixed left-0 top-0 z-20 h-screen bg-slate-800 shadow-xl flex flex-col transition-all duration-300
   ${collapsed ? "w-20" : "w-64"}`}
-      style={{ minWidth: collapsed ? '5rem' : '16rem' }}
+      style={{ minWidth: collapsed ? '4rem' : '16rem' }}
     >
       {/* Collapse Button - hidden on small screens */}
       <button
@@ -47,13 +49,13 @@ const Sidebar = () => {
 
       {/* Profile Card */}
       <div
-        className={`p-6 relative flex items-center gap-3 bg-slate-700 rounded-2xl mx-4 mt-6 shadow-sm transition-all duration-300 h-20
+        className={`p-6 relative flex items-center gap-2 bg-slate-700 rounded-2xl mx-4 mt-6 shadow-sm transition-all duration-300 h-20
           ${collapsed ? "justify-center" : "justify-start"}`}
       >
         <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-green-700 border-2 border-gray-700 flex items-center justify-center" />
         {!collapsed && <div>
-          <h4 className="text-base font-semibold text-white truncate">User Name</h4>
-          <p className="text-xs text-gray-400 truncate">#ID 123456789</p>
+          <h4 className="text-base font-semibold text-white truncate">John Doe</h4>
+          <p className="text-xs text-gray-400 truncate">KY Software</p>
         </div>}
       </div>
 
@@ -68,9 +70,9 @@ const Sidebar = () => {
                   disabled={!item.path}
                   onClick={() => item.path && navigate(item.path)}
                   className={`
-                    w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all duration-150 whitespace-nowrap 
+                    w-full flex items-center gap-3 px-5 py-3 rounded-xl transition-all duration-150 whitespace-nowrap 
                     ${isActive
-                      ? "bg-gradient-to-r from-green-600/80 to-green-500/60 text-white font-bold shadow-green-900/20 shadow-md"
+                      ? "bg-green-600 text-white font-bold"
                       : "hover:bg-gray-800 hover:text-white text-gray-400"
                     }
                   `}
@@ -78,7 +80,7 @@ const Sidebar = () => {
                   <span
                     className={`
                       text-[1.3rem] flex items-center justify-center
-                      ${isActive ? "bg-green-700/25 p-2 rounded-lg" : ""}
+                      ${isActive ? "py-2 rounded-lg" : ""}
                     `}
                   >
                     {item.icon}

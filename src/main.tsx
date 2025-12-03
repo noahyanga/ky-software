@@ -12,6 +12,8 @@ import ReportsPage from "./pages/Reports";
 import FinancialsPage from "./pages/Financials";
 import SupportPage from "./pages/Support";
 import SettingsPage from "./pages/Settings";
+import UserManagementPage from "./pages/UserManagement";
+import AnalyticsPage from "./pages/Analytics";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -24,6 +26,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Route path="/financials" element={<FinancialsPage />} />
         <Route path="/support" element={<SupportPage />} />
         <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/users" element={<UserManagementPage />} />
+        <Route path="/analytics" element={<AnalyticsPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />

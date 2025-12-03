@@ -47,9 +47,9 @@ export default function SettingsPage() {
       <Header />
       <Sidebar />
 
-      <div className="max-w-3xl mx-auto py-10 px-6">
+      <div className="max-w-5xl mx-auto py-8 px-6">
         <header className="mb-10">
-          <h1 className="text-4xl font-extrabold tracking-tight text-gray-900">
+          <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 mb-1">
             Settings
           </h1>
           <p className="text-gray-600">

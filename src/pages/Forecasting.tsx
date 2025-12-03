@@ -123,7 +123,7 @@ const ForecastingPage: React.FC = () => {
         {/* Header and Actions */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-4xl font-extrabold" style={{ color: 'black' }}>Forecasting</h1>
+            <h1 className="text-3xl font-extrabold" style={{ color: 'black' }}>Forecasting</h1>
             <p className="text-gray-700">Visualize monthly cashflow forecasts and test scenarios to optimize decisions.</p>
           </div>
           <div className="flex items-center gap-4">
@@ -260,7 +260,7 @@ const ForecastingPage: React.FC = () => {
               ))}
             </div>
             <button className="w-full mt-6 bg-blue-50 border border-blue-100 text-blue-700 font-semibold py-2 rounded-lg shadow hover:bg-blue-100 transition">
-              <FiHelpCircle className="inline mr-2" /> Need help with metrics?
+              <FiHelpCircle className="inline mr-2" /> Help with Metrics?
             </button>
           </aside>
         </div>

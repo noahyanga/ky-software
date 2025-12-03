@@ -38,8 +38,8 @@ CashFlow Pro empowers businesses and advisors to seamlessly manage, analyze, and
 ### Clone the Repository
 
 ```
-git clone https://github.com/GowthamNalluri7/ky-upload.git
-cd ky-upload
+git clone https://github.com/noahyanga/ky-software.git
+cd ky-software
 ```
 
 ### Install Dependencies

@@ -1,12 +1,27 @@
 import React, { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
-import { FiUpload, FiFile, FiLoader } from "react-icons/fi";
+import {
+  FiUpload,
+  FiFile,
+  FiLoader,
+  FiTrendingUp,
+  FiTrendingDown,
+  FiBarChart,
+  FiDollarSign,
+  FiCalendar,
+  FiDownload,
+  FiAlertTriangle,
+  FiCheckCircle,
+  FiInfo,
+} from "react-icons/fi";
 
 type LineItem = {
   label: string;
   valueA: number;
   valueB: number;
+  category?: "positive" | "negative" | "neutral";
+  description?: string;
 };
 
 type Section = {
@@ -14,43 +29,141 @@ type Section = {
   title: string;
   subtitle: string;
   lines: LineItem[];
+  color: string;
+  icon: any;
 };
 
 const SECTIONS: Section[] = [
   {
     id: "income",
     title: "Income Statement",
-    subtitle: "Key P&L metrics",
+    subtitle: "Revenue & Profitability",
+    icon: FiTrendingUp,
+    color: "emerald",
     lines: [
-      { label: "Gross Revenue", valueA: 1_104_500, valueB: 993_000 },
-      { label: "Cost of Goods Sold", valueA: 750_304, valueB: 625_796 },
-      { label: "Gross Profit", valueA: 354_196, valueB: 367_204 },
-      { label: "Operating Expenses", valueA: 750_304, valueB: 625_796 },
-      { label: "Net Income", valueA: 221_559, valueB: 336_275 },
+      {
+        label: "Total Revenue",
+        valueA: 1_104_500,
+        valueB: 993_000,
+        category: "positive",
+        description: "Total income from all business activities",
+      },
+      {
+        label: "Cost of Goods Sold",
+        valueA: 750_304,
+        valueB: 625_796,
+        category: "negative",
+        description: "Direct costs to produce goods/services",
+      },
+      {
+        label: "Gross Profit",
+        valueA: 354_196,
+        valueB: 367_204,
+        category: "positive",
+        description: "Revenue minus cost of goods sold",
+      },
+      {
+        label: "Operating Expenses",
+        valueA: 275_304,
+        valueB: 225_796,
+        category: "negative",
+        description: "Day-to-day business operating costs",
+      },
+      {
+        label: "Net Income",
+        valueA: 78_892,
+        valueB: 141_408,
+        category: "positive",
+        description: "Final profit after all expenses",
+      },
     ],
   },
   {
     id: "balance",
     title: "Balance Sheet",
-    subtitle: "Assets & equity snapshot",
+    subtitle: "Assets & Financial Position",
+    icon: FiBarChart,
+    color: "blue",
     lines: [
-      { label: "Cash & Equivalents", valueA: 225_000, valueB: 110_000 },
-      { label: "Accounts Receivable", valueA: 280_000, valueB: 295_000 },
-      { label: "Total Assets", valueA: 766_669, valueB: 712_285 },
-      { label: "Total Liabilities", valueA: 216_825, valueB: 244_000 },
-      { label: "Shareholders’ Equity", valueA: 549_844, valueB: 393_285 },
+      {
+        label: "Cash & Equivalents",
+        valueA: 225_000,
+        valueB: 110_000,
+        category: "positive",
+        description: "Liquid assets readily available",
+      },
+      {
+        label: "Accounts Receivable",
+        valueA: 280_000,
+        valueB: 295_000,
+        category: "positive",
+        description: "Money owed by customers",
+      },
+      {
+        label: "Total Assets",
+        valueA: 766_669,
+        valueB: 712_285,
+        category: "positive",
+        description: "Everything the company owns",
+      },
+      {
+        label: "Total Liabilities",
+        valueA: 216_825,
+        valueB: 244_000,
+        category: "negative",
+        description: "What the company owes",
+      },
+      {
+        label: "Shareholders' Equity",
+        valueA: 549_844,
+        valueB: 468_285,
+        category: "positive",
+        description: "Owner's stake in the company",
+      },
     ],
   },
   {
     id: "cashflow",
-    title: "Cash Flow",
-    subtitle: "Movement in cash",
+    title: "Cash Flow Statement",
+    subtitle: "Cash Movement & Liquidity",
+    icon: FiDollarSign,
+    color: "purple",
     lines: [
-      { label: "Net Cash from Operations", valueA: 184_000, valueB: 388_900 },
-      { label: "Net Cash from Investing", valueA: -10_000, valueB: -120_000 },
-      { label: "Net Cash from Financing", valueA: -59_000, valueB: -253_900 },
-      { label: "Net Change in Cash", valueA: 115_000, valueB: 15_000 },
-      { label: "Ending Cash Balance", valueA: 225_000, valueB: 110_000 },
+      {
+        label: "Operating Cash Flow",
+        valueA: 184_000,
+        valueB: 188_900,
+        category: "positive",
+        description: "Cash from core business operations",
+      },
+      {
+        label: "Investing Cash Flow",
+        valueA: -45_000,
+        valueB: -120_000,
+        category: "negative",
+        description: "Cash used for investments",
+      },
+      {
+        label: "Financing Cash Flow",
+        valueA: -24_000,
+        valueB: -53_900,
+        category: "negative",
+        description: "Cash from loans, equity, dividends",
+      },
+      {
+        label: "Net Cash Change",
+        valueA: 115_000,
+        valueB: 15_000,
+        category: "positive",
+        description: "Overall change in cash position",
+      },
+      {
+        label: "Ending Cash Balance",
+        valueA: 225_000,
+        valueB: 110_000,
+        category: "positive",
+        description: "Cash available at period end",
+      },
     ],
   },
 ];
@@ -60,6 +173,16 @@ type UploadedFile = {
   name: string;
   date: string;
   size: string;
+  period: string;
+};
+
+type KeyMetric = {
+  label: string;
+  value: string | number;
+  change: number;
+  description: string;
+  format: "currency" | "percentage" | "ratio";
+  trend: "up" | "down" | "neutral";
 };
 
 function formatCurrency(n: number) {
@@ -70,12 +193,92 @@ function formatCurrency(n: number) {
   return `${sign}$${abs.toLocaleString()}`;
 }
 
+function formatPercentage(n: number) {
+  return `${n.toFixed(1)}%`;
+}
+
 function diffPct(a: number, b: number) {
   if (b === 0) return null;
   return ((a - b) / Math.abs(b)) * 100;
 }
 
-function MetricRow({
+function calculateKeyMetrics(sections: Section[]): KeyMetric[] {
+  const incomeSection = sections.find((s) => s.id === "income");
+  const balanceSection = sections.find((s) => s.id === "balance");
+  const cashflowSection = sections.find((s) => s.id === "cashflow");
+
+  if (!incomeSection || !balanceSection || !cashflowSection) return [];
+
+  const revenue = incomeSection.lines.find((l) => l.label === "Total Revenue");
+  const netIncome = incomeSection.lines.find((l) => l.label === "Net Income");
+  const totalAssets = balanceSection.lines.find(
+    (l) => l.label === "Total Assets"
+  );
+  const equity = balanceSection.lines.find(
+    (l) => l.label === "Shareholders' Equity"
+  );
+  const operatingCash = cashflowSection.lines.find(
+    (l) => l.label === "Operating Cash Flow"
+  );
+
+  const metrics: KeyMetric[] = [];
+
+  if (revenue) {
+    const change = diffPct(revenue.valueA, revenue.valueB) || 0;
+    metrics.push({
+      label: "Revenue Growth",
+      value: formatPercentage(change),
+      change,
+      description: "Year-over-year revenue change",
+      format: "percentage",
+      trend: change > 0 ? "up" : change < 0 ? "down" : "neutral",
+    });
+  }
+
+  if (netIncome && revenue) {
+    const marginA = (netIncome.valueA / revenue.valueA) * 100;
+    const marginB = (netIncome.valueB / revenue.valueB) * 100;
+    const change = marginA - marginB;
+    metrics.push({
+      label: "Net Profit Margin",
+      value: formatPercentage(marginA),
+      change,
+      description: "Net income as % of revenue",
+      format: "percentage",
+      trend: change > 0 ? "up" : change < 0 ? "down" : "neutral",
+    });
+  }
+
+  if (netIncome && equity) {
+    const roeA = (netIncome.valueA / equity.valueA) * 100;
+    const roeB = (netIncome.valueB / equity.valueB) * 100;
+    const change = roeA - roeB;
+    metrics.push({
+      label: "Return on Equity",
+      value: formatPercentage(roeA),
+      change,
+      description: "Efficiency in generating profit from equity",
+      format: "percentage",
+      trend: change > 0 ? "up" : change < 0 ? "down" : "neutral",
+    });
+  }
+
+  if (operatingCash) {
+    const change = diffPct(operatingCash.valueA, operatingCash.valueB) || 0;
+    metrics.push({
+      label: "Operating Cash Flow",
+      value: formatCurrency(operatingCash.valueA),
+      change,
+      description: "Cash generated from operations",
+      format: "currency",
+      trend: change > 0 ? "up" : change < 0 ? "down" : "neutral",
+    });
+  }
+
+  return metrics;
+}
+
+function MetricCard({
   line,
   showCompare,
   labelA,
@@ -87,47 +290,132 @@ function MetricRow({
   labelB: string;
 }) {
   const pct = showCompare ? diffPct(line.valueA, line.valueB) : null;
-  const pctColor =
-    pct == null ? "text-gray-400" : pct >= 0 ? "text-emerald-600" : "text-rose-600";
+  const isPositiveChange = pct !== null && pct > 0;
+  const isNegativeChange = pct !== null && pct < 0;
 
   return (
-    <div className="py-4 border-b border-gray-100">
-      <div className="text-xs font-medium text-gray-800 mb-1">{line.label}</div>
+    <div className="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-colors duration-200">
+      <div className="flex items-start justify-between mb-3">
+        <div className="flex-1">
+          <h4 className="font-semibold text-gray-900 text-sm mb-1">
+            {line.label}
+          </h4>
+          {line.description && (
+            <p className="text-xs text-gray-500 leading-relaxed">
+              {line.description}
+            </p>
+          )}
+        </div>
+        {pct !== null && (
+          <div
+            className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold ${
+              isPositiveChange
+                ? "bg-emerald-100 text-emerald-700"
+                : isNegativeChange
+                ? "bg-red-100 text-red-700"
+                : "bg-gray-200 text-gray-700"
+            }`}
+          >
+            {isPositiveChange && <FiTrendingUp size={12} />}
+            {isNegativeChange && <FiTrendingDown size={12} />}
+            {pct.toFixed(1)}%
+          </div>
+        )}
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-baseline">
-        {/* File A */}
-        <div className="flex flex-col">
-          <span className="text-xs uppercase tracking-wide text-gray-500 mb-0.5">
-            {labelA}
+      <div className="grid grid-cols-1 gap-3">
+        <div className="flex justify-between items-center">
+          <span className="text-xs text-gray-500 uppercase tracking-wide">
+            {showCompare ? "Current" : "Amount"}
           </span>
-          <span className="text-xl font-semibold text-gray-900">
+          <span
+            className={`font-bold text-lg ${
+              line.category === "positive"
+                ? "text-emerald-600"
+                : line.category === "negative"
+                ? "text-red-600"
+                : "text-gray-900"
+            }`}
+          >
             {formatCurrency(line.valueA)}
           </span>
         </div>
 
-        {/* File B (optional) */}
         {showCompare && (
-          <div className="flex flex-col">
-            <span className="text-xs uppercase tracking-wide text-gray-500 mb-0.5">
-              {labelB}
+          <div className="flex justify-between items-center pt-2 border-t border-gray-200">
+            <span className="text-xs text-gray-500 uppercase tracking-wide">
+              Previous
             </span>
-            <span className="text-xl font-semibold text-gray-900">
+            <span className="font-semibold text-gray-700">
               {formatCurrency(line.valueB)}
             </span>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
 
-        {/* Change (optional, only when comparing) */}
-        {showCompare && (
-          <div className="flex flex-col md:items-end">
-            <span className="text-xs uppercase tracking-wide text-gray-500 mb-0.5">
-              Change
-            </span>
-            <span className={`text-sm font-semibold ${pctColor}`}>
-              {pct == null ? "–" : `${pct.toFixed(1)}%`}
-            </span>
+function KeyMetricsPanel({ metrics }: { metrics: KeyMetric[] }) {
+  return (
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="p-2 bg-blue-100 rounded-lg">
+          <FiBarChart className="text-blue-600" size={20} />
+        </div>
+        <div>
+          <h2 className="text-xl font-semibold text-gray-900">
+            Key Financial Ratios
+          </h2>
+          <p className="text-sm text-gray-600">Important metrics at a glance</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {metrics.map((metric, index) => (
+          <div
+            key={index}
+            className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-4 border border-gray-100"
+          >
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex items-center gap-2">
+                {metric.trend === "up" && (
+                  <FiTrendingUp className="text-emerald-500" size={16} />
+                )}
+                {metric.trend === "down" && (
+                  <FiTrendingDown className="text-red-500" size={16} />
+                )}
+                {metric.trend === "neutral" && (
+                  <div className="w-4 h-4 bg-gray-400 rounded-full" />
+                )}
+                <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">
+                  {metric.label}
+                </span>
+              </div>
+            </div>
+
+            <div className="mb-2">
+              <span className="text-2xl font-bold text-gray-900">
+                {metric.value}
+              </span>
+            </div>
+
+            <p className="text-xs text-gray-500 leading-relaxed">
+              {metric.description}
+            </p>
+
+            {metric.change !== 0 && (
+              <div
+                className={`mt-2 text-xs font-semibold ${
+                  metric.change > 0 ? "text-emerald-600" : "text-red-600"
+                }`}
+              >
+                {metric.change > 0 ? "+" : ""}
+                {metric.change.toFixed(1)}% vs previous period
+              </div>
+            )}
           </div>
-        )}
+        ))}
       </div>
     </div>
   );
@@ -148,15 +436,17 @@ export default function FinancialsPage() {
       const files: UploadedFile[] = [
         {
           id: 1,
-          name: "FY 2023 Financials.pdf",
-          date: "Nov 29, 2025",
+          name: "Annual Report 2023.pdf",
+          date: "Dec 31, 2023",
           size: "245.3 KB",
+          period: "FY 2023",
         },
         {
           id: 2,
-          name: "FY 2022 Financials.pdf",
-          date: "Nov 29, 2024",
+          name: "Annual Report 2022.pdf",
+          date: "Dec 31, 2022",
           size: "231.0 KB",
+          period: "FY 2022",
         },
       ];
       setUploadedFiles(files);
@@ -168,209 +458,319 @@ export default function FinancialsPage() {
   };
 
   const showCompare = viewMode === "compare" && compareFile;
+  const keyMetrics = calculateKeyMetrics(SECTIONS);
 
   return (
     <div className="bg-slate-200 min-h-screen">
       <Header />
       <Sidebar />
 
-      <main className="max-w-7xl mx-auto py-10 px-6 space-y-8">
-        {/* Title + upload */}
-        <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+      <main className="max-w-7xl mx-auto py-8 px-6">
+        {/* Header */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8">
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 mb-2">
-              Financial Report Analysis
+            <h1 className="text-4xl font-bold text-gray-900 mb-3">
+              Financial Reports
             </h1>
-            <p className="text-gray-600 max-w-2xl">
-              Upload, view a single report, or compare two fiscal years side by side.
+            <p className="text-lg text-gray-600">
+              Upload and analyze financial statements with automated insights
+              and comparisons.
             </p>
           </div>
-          <label className="bg-white border-2 border-dashed border-gray-300 rounded-2xl px-8 py-4 text-center cursor-pointer hover:border-emerald-300 hover:bg-emerald-50 transition-all duration-200 flex items-center gap-3 shadow-md hover:shadow-lg">
-            <FiUpload className="w-6 h-6 text-emerald-500" />
-            <span className="font-medium text-gray-700">Upload Statements</span>
-            <input
-              type="file"
-              multiple
-              onChange={handleUpload}
-              className="hidden"
-              accept=".pdf,.xlsx,.csv"
-            />
-          </label>
-        </header>
 
-        <section className="flex gap-8">
-          {/* Files list */}
-          <aside className="w-80 flex-shrink-0 bg-white rounded-2xl shadow border border-gray-200 p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <FiFile className="w-5 h-5 text-gray-500" />
-              <h2 className="text-lg font-semibold text-gray-900">
-                Uploaded Files ({uploadedFiles.length})
-              </h2>
-            </div>
-            <div className="space-y-2 max-h-96 overflow-y-auto">
-              {uploadedFiles.map((file) => (
-                <button
-                  key={file.id}
-                  onClick={() => setSelectedFile(file)}
-                  className={
-                    "w-full text-left px-3 py-3 rounded-xl border flex items-center gap-3 text-sm transition " +
-                    (selectedFile?.id === file.id
-                      ? "bg-emerald-50 border-emerald-300 shadow-sm"
-                      : "bg-white border-gray-200 hover:bg-gray-50")
-                  }
-                >
-                  <div
-                    className={
-                      "w-2 h-2 rounded-full " +
-                      (selectedFile?.id === file.id
-                        ? "bg-emerald-500"
-                        : "bg-gray-300")
-                    }
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-gray-900 truncate">
-                      {file.name}
-                    </p>
-                    <p className="text-[11px] text-gray-500">
-                      {file.date} • {file.size}
-                    </p>
+          <div className="flex items-center gap-4">
+            <label className="bg-white border-2 border-dashed border-gray-300 rounded-xl px-6 py-3 cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-all duration-200 flex items-center gap-3 shadow-sm">
+              <FiUpload className="w-5 h-5 text-blue-600" />
+              <span className="font-medium text-gray-700">Upload Reports</span>
+              <input
+                type="file"
+                multiple
+                onChange={handleUpload}
+                className="hidden"
+                accept=".pdf,.xlsx,.csv"
+              />
+            </label>
+
+            {selectedFile && (
+              <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-3 rounded-xl hover:bg-blue-700 transition-colors">
+                <FiDownload size={18} />
+                Export Analysis
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="flex gap-8">
+          {/* Sidebar with files */}
+          <div className="w-80 flex-shrink-0 space-y-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-gray-100 rounded-lg">
+                  <FiFile className="w-5 h-5 text-gray-600" />
+                </div>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Uploaded Files ({uploadedFiles.length})
+                </h2>
+              </div>
+
+              <div className="space-y-3 max-h-96 overflow-y-auto">
+                {uploadedFiles.length === 0 && (
+                  <div className="text-center py-8 text-gray-500">
+                    <FiFile className="w-8 h-8 mx-auto mb-2 opacity-40" />
+                    <p className="text-sm">No files uploaded yet</p>
                   </div>
-                </button>
-              ))}
+                )}
+
+                {uploadedFiles.map((file) => (
+                  <button
+                    key={file.id}
+                    onClick={() => setSelectedFile(file)}
+                    className={`w-full text-left p-4 rounded-xl border transition-all duration-200 ${
+                      selectedFile?.id === file.id
+                        ? "bg-blue-50 border-blue-300 shadow-sm"
+                        : "bg-gray-50 border-gray-200 hover:bg-white hover:shadow-sm"
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div
+                        className={`w-3 h-3 rounded-full mt-1 ${
+                          selectedFile?.id === file.id
+                            ? "bg-blue-500"
+                            : "bg-gray-300"
+                        }`}
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-gray-900 truncate mb-1">
+                          {file.name}
+                        </p>
+                        <div className="space-y-1">
+                          <p className="text-xs text-gray-500">
+                            {file.period} • {file.date}
+                          </p>
+                          <p className="text-xs text-gray-400">{file.size}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              {uploadedFiles.length > 1 && (
+                <div className="mt-6 pt-4 border-t border-gray-200">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Compare with
+                  </label>
+                  <select
+                    value={compareFile?.id || ""}
+                    onChange={(e) =>
+                      setCompareFile(
+                        uploadedFiles.find(
+                          (f) => f.id === Number(e.target.value)
+                        ) || null
+                      )
+                    }
+                    className="w-full p-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Select comparison file</option>
+                    {uploadedFiles
+                      .filter((f) => f.id !== selectedFile?.id)
+                      .map((f) => (
+                        <option key={f.id} value={f.id}>
+                          {f.period} - {f.name}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              )}
             </div>
 
-            {/* Compare selector */}
-            {uploadedFiles.length > 1 && (
-              <div className="mt-4 border-t pt-4 space-y-2">
-                <p className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
-                  Compare with
-                </p>
-                <select
-                  value={compareFile?.id || ""}
-                  onChange={(e) =>
-                    setCompareFile(
-                      uploadedFiles.find((f) => f.id === Number(e.target.value)) ||
-                      null
-                    )
-                  }
-                  className="w-full p-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                >
-                  <option value="">Select file</option>
-                  {uploadedFiles
-                    .filter((f) => f.id !== selectedFile?.id)
-                    .map((f) => (
-                      <option key={f.id} value={f.id}>
-                        {f.name}
-                      </option>
-                    ))}
-                </select>
+            {/* Quick insights panel */}
+            {selectedFile && !isProcessing && (
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Quick Insights
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3 p-3 bg-emerald-50 rounded-lg">
+                    <FiCheckCircle
+                      className="text-emerald-600 mt-0.5"
+                      size={16}
+                    />
+                    <div>
+                      <p className="text-sm font-medium text-emerald-800">
+                        Healthy Cash Position
+                      </p>
+                      <p className="text-xs text-emerald-600">
+                        Strong liquid assets
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 bg-yellow-50 rounded-lg">
+                    <FiAlertTriangle
+                      className="text-yellow-600 mt-0.5"
+                      size={16}
+                    />
+                    <div>
+                      <p className="text-sm font-medium text-yellow-800">
+                        Monitor Expenses
+                      </p>
+                      <p className="text-xs text-yellow-600">
+                        Operating costs increased
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
+                    <FiInfo className="text-blue-600 mt-0.5" size={16} />
+                    <div>
+                      <p className="text-sm font-medium text-blue-800">
+                        Growth Opportunity
+                      </p>
+                      <p className="text-xs text-blue-600">
+                        Revenue trending upward
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
-          </aside>
+          </div>
 
-          {/* Right side */}
+          {/* Main content */}
           <div className="flex-1 space-y-6">
-            {/* View toggle */}
+            {/* View mode toggle */}
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setViewMode("single")}
-                className={`px-6 py-2 rounded-xl font-medium text-sm transition-all duration-200 ${viewMode === "single"
-                  ? "bg-emerald-600 text-white shadow-lg"
-                  : "bg-white border border-gray-200 hover:shadow-md"
-                  }`}
+                className={`px-6 py-3 rounded-xl font-medium text-sm transition-all duration-200 ${
+                  viewMode === "single"
+                    ? "bg-blue-600 text-white shadow-lg"
+                    : "bg-white border border-gray-200 text-gray-700 hover:shadow-sm"
+                }`}
               >
-                Single Report
+                Single View
               </button>
               <button
                 onClick={() => setViewMode("compare")}
-                className={`px-6 py-2 rounded-xl font-medium text-sm transition-all duration-200 ${viewMode === "compare"
-                  ? "bg-emerald-600 text-white shadow-lg"
-                  : "bg-white border border-gray-200 hover:shadow-md"
-                  }`}
+                className={`px-6 py-3 rounded-xl font-medium text-sm transition-all duration-200 ${
+                  viewMode === "compare"
+                    ? "bg-blue-600 text-white shadow-lg"
+                    : "bg-white border border-gray-200 text-gray-700 hover:shadow-sm"
+                }`}
                 disabled={uploadedFiles.length < 2}
               >
-                Compare Reports
+                Compare View
               </button>
             </div>
 
             {isProcessing && (
-              <div className="bg-white rounded-3xl shadow-xl border border-gray-200 py-16 flex flex-col justify-center items-center">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 py-16 flex flex-col justify-center items-center">
                 <div className="mb-4">
-                  <span className="inline-block text-4xl text-emerald-400 animate-spin">
-                    <FiLoader />
-                  </span>
+                  <FiLoader className="text-4xl text-blue-500 animate-spin" />
                 </div>
                 <h3 className="font-semibold text-gray-900 text-lg mb-2">
-                  Processing Statements
+                  Processing Financial Statements
                 </h3>
-                <p className="text-gray-500 text-sm">
-                  Parsing and analyzing your financial data. This usually takes a few seconds.
+                <p className="text-gray-600 text-center max-w-md">
+                  Analyzing your financial data and calculating key metrics.
+                  This usually takes a few moments.
                 </p>
               </div>
             )}
 
             {!isProcessing && selectedFile && (
               <>
-                <div className="bg-sky-50 border border-sky-100 rounded-xl px-4 py-3 text-xs text-slate-700 flex items-center justify-between">
-                  <span className="font-medium">
-                    {showCompare
-                      ? "Side‑by‑side comparison"
-                      : `Viewing: ${selectedFile.name}`}
-                  </span>
+                {/* Status indicator */}
+                <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <FiCalendar className="text-blue-600" size={18} />
+                    <span className="font-medium text-blue-900">
+                      {showCompare && compareFile
+                        ? `Comparing ${selectedFile.period} vs ${compareFile.period}`
+                        : `Viewing ${selectedFile.period}`}
+                    </span>
+                  </div>
                   {showCompare && compareFile && (
-                    <span className="text-[11px] text-slate-500">
-                      {selectedFile.name} vs {compareFile.name}
+                    <span className="text-sm text-blue-700">
+                      Period-over-period analysis
                     </span>
                   )}
                 </div>
 
-                {/* 3 big columns, each row = label + file A + optional file B */}
-                <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  {SECTIONS.map((section) => (
-                    <article
-                      key={section.id}
-                      className="bg-white rounded-2xl shadow border border-gray-200 px-6 py-5"
-                    >
-                      <header className="mb-3">
-                        <h2 className="text-base font-semibold text-gray-900">
-                          {section.title}
-                        </h2>
-                        <p className="text-xs text-gray-500">
-                          {section.subtitle}
-                        </p>
-                      </header>
+                {/* Key metrics */}
+                {keyMetrics.length > 0 && (
+                  <KeyMetricsPanel metrics={keyMetrics} />
+                )}
 
-                      <div>
-                        {section.lines.map((line) => (
-                          <MetricRow
-                            key={line.label}
-                            line={line}
-                            showCompare={!!showCompare}
-                            labelA={selectedFile.name}
-                            labelB={compareFile?.name || ""}
-                          />
-                        ))}
+                {/* Financial statements */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {SECTIONS.map((section) => {
+                    const Icon = section.icon;
+                    const colorClasses = {
+                      emerald: "bg-emerald-100 text-emerald-600",
+                      blue: "bg-blue-100 text-blue-600",
+                      purple: "bg-purple-100 text-purple-600",
+                    };
+
+                    return (
+                      <div
+                        key={section.id}
+                        className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden"
+                      >
+                        <div className="p-6 border-b border-gray-100">
+                          <div className="flex items-center gap-3 mb-2">
+                            <div
+                              className={`p-2 rounded-lg ${
+                                colorClasses[
+                                  section.color as keyof typeof colorClasses
+                                ]
+                              }`}
+                            >
+                              <Icon size={20} />
+                            </div>
+                            <h2 className="text-lg font-semibold text-gray-900">
+                              {section.title}
+                            </h2>
+                          </div>
+                          <p className="text-sm text-gray-600">
+                            {section.subtitle}
+                          </p>
+                        </div>
+
+                        <div className="p-6 space-y-4">
+                          {section.lines.map((line) => (
+                            <MetricCard
+                              key={line.label}
+                              line={line}
+                              showCompare={!!showCompare}
+                              labelA={selectedFile.name}
+                              labelB={compareFile?.name || ""}
+                            />
+                          ))}
+                        </div>
                       </div>
-                    </article>
-                  ))}
-                </section>
+                    );
+                  })}
+                </div>
               </>
             )}
 
             {!isProcessing && !selectedFile && (
-              <div className="bg-white rounded-3xl shadow-xl p-16 text-center border border-dashed border-gray-200">
-                <p className="text-lg font-semibold text-gray-900 mb-2">
-                  Upload financial statements to begin
-                </p>
-                <p className="text-gray-500 text-sm">
-                  Once processed, choose between viewing a single report or comparing two files.
+              <div className="bg-white rounded-xl shadow-sm border-2 border-dashed border-gray-300 p-16 text-center">
+                <FiUpload className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  Ready to Analyze Your Financials
+                </h3>
+                <p className="text-gray-600 max-w-md mx-auto">
+                  Upload your financial statements (PDF, Excel, or CSV) to get
+                  started with automated analysis and insights.
                 </p>
               </div>
             )}
           </div>
-        </section>
+        </div>
       </main>
     </div>
   );
 }
-

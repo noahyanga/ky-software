@@ -3,42 +3,115 @@ import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import {
   FiUsers,
-  FiFileText,
   FiTrendingUp,
-  FiCheckCircle,
-  FiBarChart2,
-  FiActivity
+  FiDollarSign,
+  FiTarget,
+  FiActivity,
+  FiZap,
+  FiArrowUpRight,
+  FiArrowDownRight,
+  FiMoreHorizontal,
+  FiRefreshCw,
+  FiStar,
+  FiBarChart,
+  FiPieChart,
+  FiCalendar,
+  FiDownload,
+  FiFilter,
 } from "react-icons/fi";
 
 const AnalyticsPage: React.FC = () => {
-  const [priorityFilter, setPriorityFilter] = useState("All");
-  const [categoryFilter, setCategoryFilter] = useState("All");
+  const [selectedMetric, setSelectedMetric] = useState("revenue");
+  const [activeTab, setActiveTab] = useState("overview");
 
-  // KPI Data
-  const kpis = [
-    { title: "Clients Managed", value: "247", change: "+12%", icon: FiUsers, color: "emerald" },
-    { title: "Reports Generated", value: "1,284", change: "+8%", icon: FiFileText, color: "blue" },
-    { title: "Opportunities Identified", value: "156", change: "+23%", icon: FiTrendingUp, color: "purple" },
-    { title: "Recommendation Success Rate", value: "87%", change: "+4%", icon: FiCheckCircle, color: "green" },
+  const metrics = [
+    {
+      id: "revenue",
+      title: "Total Revenue",
+      value: "$2.4M",
+      change: "+23.5%",
+      trend: "up",
+      icon: FiDollarSign,
+      color: "#10B981",
+      bgColor: "bg-emerald-50",
+      textColor: "text-emerald-600",
+    },
+    {
+      id: "clients",
+      title: "Active Clients",
+      value: "247",
+      change: "+12.3%",
+      trend: "up",
+      icon: FiUsers,
+      color: "#3B82F6",
+      bgColor: "bg-blue-50",
+      textColor: "text-blue-600",
+    },
+    {
+      id: "success",
+      title: "Success Rate",
+      value: "87.2%",
+      change: "+4.1%",
+      trend: "up",
+      icon: FiTarget,
+      color: "#8B5CF6",
+      bgColor: "bg-purple-50",
+      textColor: "text-purple-600",
+    },
+    {
+      id: "insights",
+      title: "AI Insights",
+      value: "1,284",
+      change: "+18.7%",
+      trend: "up",
+      icon: FiZap,
+      color: "#F59E0B",
+      bgColor: "bg-yellow-50",
+      textColor: "text-yellow-600",
+    },
   ];
 
-  // Opportunities by Priority
-  const priorityData = [
-    { label: "High", value: 45, color: "#ef4444" },
-    { label: "Medium", value: 78, color: "#f59e0b" },
-    { label: "Low", value: 33, color: "#10b981" },
+  const opportunityCategories = [
+    { name: "Cash Flow", value: 85, color: "#10B981", percentage: 85 },
+    {
+      name: "Payment Optimization",
+      value: 72,
+      color: "#3B82F6",
+      percentage: 72,
+    },
+    { name: "Risk Management", value: 64, color: "#8B5CF6", percentage: 64 },
+    { name: "Process Automation", value: 58, color: "#F59E0B", percentage: 58 },
   ];
 
-  // Opportunities by Category
-  const categoryData = [
-    { label: "Cash Flow", value: 52, color: "#3b82f6" },
-    { label: "DSO Reduction", value: 41, color: "#8b5cf6" },
-    { label: "Payment Optimization", value: 38, color: "#06b6d4" },
-    { label: "Liquidity", value: 25, color: "#10b981" },
+  const recentActivities = [
+    {
+      type: "optimization",
+      title: "Cash flow improved by $45K",
+      time: "2 min ago",
+      impact: "high",
+      icon: FiTrendingUp,
+      bgColor: "bg-emerald-50",
+      iconColor: "text-emerald-600",
+    },
+    {
+      type: "alert",
+      title: "Payment delay detected - ClientCorp",
+      time: "15 min ago",
+      impact: "medium",
+      icon: FiActivity,
+      bgColor: "bg-yellow-50",
+      iconColor: "text-yellow-600",
+    },
+    {
+      type: "success",
+      title: "DSO reduced to 32 days",
+      time: "1 hour ago",
+      impact: "high",
+      icon: FiTarget,
+      bgColor: "bg-blue-50",
+      iconColor: "text-blue-600",
+    },
   ];
-
-  const maxPriorityValue = Math.max(...priorityData.map(d => d.value));
-  const maxCategoryValue = Math.max(...categoryData.map(d => d.value));
 
   return (
     <div className="min-h-screen bg-slate-200">
@@ -46,231 +119,268 @@ const AnalyticsPage: React.FC = () => {
       <Sidebar />
 
       <main className="max-w-7xl mx-auto px-6 py-8">
-        {/* Hero Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 mb-2">
-              Analytics Dashboard
-            </h1>
-            <p className="text-gray-600 mx-auto ">
-              Comprehensive insights into your client portfolio performance, opportunities, and recommendation success.
-            </p>
+        {/* Header Section */}
+        <div className="mb-8">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900 mb-3">
+                Analytics Overview
+              </h1>
+              <p className="text-lg text-gray-600 max-w-2xl leading-relaxed">
+                Real-time insights powered by AI to optimize your financial
+                operations and drive strategic growth decisions.
+              </p>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-4 py-2">
+                <FiCalendar className="text-gray-500" size={18} />
+                <select className="bg-transparent border-none outline-none text-sm font-medium text-gray-700">
+                  <option>Last 30 days</option>
+                  <option>Last 90 days</option>
+                  <option>Last 12 months</option>
+                </select>
+              </div>
+              <button className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                <FiDownload size={18} />
+                Generate Report
+              </button>
+              <button className="p-2 bg-white border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50 transition-colors">
+                <FiRefreshCw size={18} />
+              </button>
+            </div>
           </div>
         </div>
 
-
-
-        {/* KPI Cards - Compact row */}
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
-          {kpis.map((kpi, index) => {
-            const Icon = kpi.icon;
-            const bgColor = kpi.color === "emerald" ? "bg-emerald-500" :
-              kpi.color === "blue" ? "bg-blue-500" :
-                kpi.color === "purple" ? "bg-purple-500" : "bg-emerald-500";
-            const textColor = kpi.color === "emerald" ? "from-emerald-500 to-emerald-600" :
-              kpi.color === "blue" ? "from-blue-500 to-blue-600" :
-                kpi.color === "purple" ? "from-purple-500 to-purple-600" : "from-emerald-500 to-emerald-600";
+        {/* Metrics Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {metrics.map((metric) => {
+            const Icon = metric.icon;
+            const isActive = selectedMetric === metric.id;
 
             return (
-              <div key={index} className="group bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/50 p-8 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 hover:bg-white">
-                <div className="flex items-start justify-between mb-6">
-                  <div className={`p-4 rounded-2xl ${bgColor} shadow-lg`}>
-                    <Icon className="w-7 h-7 text-white" />
+              <div
+                key={metric.id}
+                onClick={() => setSelectedMetric(metric.id)}
+                className={`bg-white border rounded-2xl p-6 cursor-pointer transition-all duration-200 hover:border-gray-300 ${
+                  isActive
+                    ? "border-blue-500 ring-1 ring-blue-500"
+                    : "border-gray-200"
+                }`}
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className={`p-3 rounded-xl ${metric.bgColor}`}>
+                    <Icon size={24} className={metric.textColor} />
                   </div>
-                  <span className={`text-sm font-bold px-3 py-1 rounded-full ${kpi.change.startsWith('+') ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
-                    {kpi.change}
-                  </span>
+                  <div
+                    className={`flex items-center gap-1 px-2 py-1 rounded-lg text-sm font-semibold ${
+                      metric.trend === "up"
+                        ? "bg-emerald-100 text-emerald-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    <FiArrowUpRight size={12} />
+                    {metric.change}
+                  </div>
                 </div>
+
                 <div>
-                  <p className="text-4xl font-black text-gray-900 mb-2">{kpi.value}</p>
-                  <p className="text-lg text-gray-600 font-semibold">{kpi.title}</p>
+                  <h3 className="text-3xl font-bold text-gray-900 mb-2">
+                    {metric.value}
+                  </h3>
+                  <p className="text-gray-600 font-medium">{metric.title}</p>
+                </div>
+
+                <div className="mt-4 w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-1000"
+                    style={{
+                      backgroundColor: metric.color,
+                      width: `${75 + Math.random() * 25}%`,
+                    }}
+                  />
                 </div>
               </div>
             );
           })}
-        </section>
+        </div>
 
-        {/* Full-width Charts Section */}
-        <section className="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-20">
-          {/* Opportunities by Priority - Larger */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/50 p-10 col-span-1 xl:col-span-1">
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-lg">
-                  <FiTrendingUp className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900">Opportunities by Priority</h2>
-                  <p className="text-sm text-gray-500">Total: 156 opportunities</p>
-                </div>
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-8">
+          {/* Opportunity Analysis */}
+          <div className="xl:col-span-2 bg-white border border-gray-200 rounded-2xl p-8">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  Opportunity Analysis
+                </h2>
+                <p className="text-gray-600">
+                  Performance metrics across key business areas
+                </p>
               </div>
-              <select
-                value={priorityFilter}
-                onChange={(e) => setPriorityFilter(e.target.value)}
-                className="rounded-xl border border-gray-300 px-4 py-2 text-sm font-semibold bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              >
-                <option>All</option>
-                <option>High</option>
-                <option>Medium</option>
-                <option>Low</option>
-              </select>
+              <div className="flex gap-2">
+                {["overview", "details", "trends"].map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      activeTab === tab
+                        ? "bg-blue-600 text-white"
+                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                    }`}
+                  >
+                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            <div className="relative h-96 bg-gradient-to-b from-gray-50 to-slate-100 rounded-2xl overflow-hidden p-8">
-              {/* Grid lines */}
-              <div className="absolute inset-0 grid grid-cols-4 gap-px opacity-20">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="bg-gray-200" />
-                ))}
-              </div>
-
-              {/* Y-axis labels */}
-              <div className="absolute left-0 top-0 bottom-0 w-16 flex flex-col justify-between items-end pr-4 pt-12 pb-12 text-sm text-gray-500 font-mono">
-                <span>{maxPriorityValue}</span>
-                <span>{(maxPriorityValue * 0.75).toFixed(0)}</span>
-                <span>{(maxPriorityValue * 0.5).toFixed(0)}</span>
-                <span>{(maxPriorityValue * 0.25).toFixed(0)}</span>
-                <span>0</span>
-              </div>
-
-              {/* X-axis labels */}
-              <div className="absolute bottom-12 left-20 right-8 flex justify-between text-sm text-gray-700 font-semibold">
-                {priorityData.map(d => (
-                  <span key={d.label} className="flex flex-col items-center">
-                    <span className="w-3 h-3 rounded-full" style={{ backgroundColor: d.color }} />
-                    <span className="mt-1 text-xs">{d.label}</span>
-                  </span>
-                ))}
-              </div>
-
-              {/* Large Bar chart SVG */}
-              <svg viewBox="0 0 500 300" className="absolute left-20 top-12 w-[calc(100%-6rem)] h-[80%]">
-                {priorityData.map((data, index) => {
-                  const barWidth = 60;
-                  const barHeight = (data.value / maxPriorityValue) * 220;
-                  const x = index * 110;
-
-                  return (
-                    <g key={data.label}>
-                      <rect
-                        x={x}
-                        y={280 - barHeight}
-                        width={barWidth}
-                        height={barHeight}
-                        rx="8"
-                        fill={data.color}
-                        className="group-hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 origin-bottom"
+            <div className="space-y-6">
+              {opportunityCategories.map((category, index) => (
+                <div
+                  key={category.name}
+                  className="p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-4 h-4 rounded-full"
+                        style={{ backgroundColor: category.color }}
                       />
-                      <text
-                        x={x + barWidth / 2}
-                        y={280 - barHeight - 8}
-                        textAnchor="middle"
-                        fontSize="16"
-                        fontWeight="800"
-                        fill="#111827"
-                        className="drop-shadow-sm"
-                      >
-                        {data.value}
-                      </text>
-                    </g>
-                  );
-                })}
-              </svg>
+                      <span className="font-semibold text-gray-900">
+                        {category.name}
+                      </span>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-2xl font-bold text-gray-900">
+                        {category.value}
+                      </span>
+                      <div className="text-sm text-gray-600">opportunities</div>
+                    </div>
+                  </div>
+
+                  <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{
+                        backgroundColor: category.color,
+                        width: `${category.percentage}%`,
+                      }}
+                    />
+                  </div>
+
+                  <div
+                    className="mt-2 text-right text-sm font-medium"
+                    style={{ color: category.color }}
+                  >
+                    {category.percentage}% completion
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Opportunities by Category - Larger */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/50 p-10 col-span-1 xl:col-span-1">
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg">
-                  <FiBarChart2 className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900">Opportunities by Category</h2>
-                  <p className="text-sm text-gray-500">Breakdown by opportunity type</p>
-                </div>
-              </div>
-              <select
-                value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value)}
-                className="rounded-xl border border-gray-300 px-4 py-2 text-sm font-semibold bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              >
-                <option>All</option>
-                <option>Cash Flow</option>
-                <option>DSO Reduction</option>
-                <option>Payment Optimization</option>
-                <option>Liquidity</option>
-              </select>
+          {/* Activity Feed */}
+          <div className="bg-white border border-gray-200 rounded-2xl p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-gray-900">Live Activity</h3>
+              <button className="text-gray-400 hover:text-gray-600">
+                <FiMoreHorizontal size={20} />
+              </button>
             </div>
 
-            <div className="relative h-96 bg-gradient-to-b from-gray-50 to-slate-100 rounded-2xl overflow-hidden p-8">
-              {/* Grid lines */}
-              <div className="absolute inset-0 grid grid-cols-5 gap-px opacity-20">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="bg-gray-200" />
-                ))}
+            <div className="space-y-4">
+              {recentActivities.map((activity, index) => {
+                const Icon = activity.icon;
+                return (
+                  <div
+                    key={index}
+                    className="flex items-start gap-4 p-3 hover:bg-gray-50 rounded-lg transition-colors"
+                  >
+                    <div className={`p-2 rounded-lg ${activity.bgColor}`}>
+                      <Icon size={16} className={activity.iconColor} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-gray-900 text-sm font-medium mb-1">
+                        {activity.title}
+                      </p>
+                      <p className="text-gray-500 text-xs">{activity.time}</p>
+                    </div>
+                    <div
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        activity.impact === "high"
+                          ? "bg-emerald-100 text-emerald-700"
+                          : "bg-yellow-100 text-yellow-700"
+                      }`}
+                    >
+                      {activity.impact}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="mt-6 pt-6 border-t border-gray-200">
+              <h4 className="text-sm font-semibold text-gray-900 mb-3">
+                Quick Actions
+              </h4>
+              <div className="grid grid-cols-2 gap-3">
+                <button className="p-3 border border-gray-200 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                  Run Analysis
+                </button>
+                <button className="p-3 border border-gray-200 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                  Export Data
+                </button>
               </div>
-
-              {/* Y-axis labels */}
-              <div className="absolute left-0 top-0 bottom-0 w-16 flex flex-col justify-between items-end pr-4 pt-12 pb-12 text-sm text-gray-500 font-mono">
-                <span>{maxCategoryValue}</span>
-                <span>{(maxCategoryValue * 0.75).toFixed(0)}</span>
-                <span>{(maxCategoryValue * 0.5).toFixed(0)}</span>
-                <span>{(maxCategoryValue * 0.25).toFixed(0)}</span>
-                <span>0</span>
-              </div>
-
-              {/* X-axis labels */}
-              <div className="absolute bottom-12 left-20 right-8 flex justify-between text-sm text-gray-700 font-semibold">
-                {categoryData.map(d => (
-                  <span key={d.label} className="flex flex-col items-center w-20">
-                    <span className="w-4 h-4 rounded-lg mb-1" style={{ backgroundColor: d.color }} />
-                    <span className="text-xs text-center truncate">{d.label}</span>
-                  </span>
-                ))}
-              </div>
-
-              {/* Large Bar chart SVG */}
-              <svg viewBox="0 0 600 300" className="absolute left-20 top-12 w-[calc(100%-6rem)] h-[80%]">
-                {categoryData.map((data, index) => {
-                  const barWidth = 45;
-                  const barHeight = (data.value / maxCategoryValue) * 220;
-                  const x = index * 105;
-
-                  return (
-                    <g key={data.label}>
-                      <rect
-                        x={x}
-                        y={280 - barHeight}
-                        width={barWidth}
-                        height={barHeight}
-                        rx="8"
-                        fill={data.color}
-                        className="group-hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 origin-bottom"
-                      />
-                      <text
-                        x={x + barWidth / 2}
-                        y={280 - barHeight - 8}
-                        textAnchor="middle"
-                        fontSize="16"
-                        fontWeight="800"
-                        fill="#111827"
-                        className="drop-shadow-sm"
-                      >
-                        {data.value}
-                      </text>
-                    </g>
-                  );
-                })}
-              </svg>
             </div>
           </div>
-        </section>
+        </div>
+
+        {/* Insights Panel */}
+        <div className="bg-white border border-gray-200 rounded-2xl p-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            AI-Powered Insights
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <FiStar size={24} className="text-blue-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Top Performer
+              </h3>
+              <p className="text-gray-600 text-sm">
+                Cash flow optimization delivering 94% success rate
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <FiTrendingUp size={24} className="text-purple-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Growth Trend
+              </h3>
+              <p className="text-gray-600 text-sm">
+                Revenue opportunities increased by 23% this month
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <FiTarget size={24} className="text-emerald-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Next Focus
+              </h3>
+              <p className="text-gray-600 text-sm">
+                Payment processing optimization shows $680K potential
+              </p>
+            </div>
+          </div>
+        </div>
       </main>
     </div>
   );
 };
 
 export default AnalyticsPage;
-
